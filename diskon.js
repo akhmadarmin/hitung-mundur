@@ -62,7 +62,7 @@ function setNextDiskonSchedule(stringDate) {
 
         jQuery(document).ready(function() {
 
-            // you can fill this var from your views.py
+            // fill this var from views.py
             stringNextSchedule = ""
             stringHourMinute = "18:00"
 
