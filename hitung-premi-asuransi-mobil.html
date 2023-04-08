@@ -4,50 +4,109 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Instan Kalkulator Asuransi Kendaraan</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	
 </head>
+
 <body>
-        <label for="harga-kendaraan">Harga Kendaraan : </label>
-        <input type="number" id="harga-kendaraan" placeholder="Ketik Harga Kendaraan">
-        <p>
-        Pilih Wilayah :
-        <select id="wilayah">
-            <option value="wilayah1">Wilayah 1</option>
-            <option value="wilayah2">Wilayah 2</option>
-            <option value="wilayah3">Wilayah 3</option>
-        </select>
-        </p>
-        <button onclick="hitungPremi()"> Hitung Perkiraan Premi </button>
-        <h2 id="perkiraan-premi"></h2>
+    <div class="container">
+		<h2>Form Premi Kendaraan</h2>
+		<form>
+			<div class="form-group">
+				<label for="harga-kendaraan">Harga Kendaraan:</label>
+				<input type="text" class="form-control" id="harga-kendaraan" placeholder="Ketik Harga Kendaraan" oninput="hitungPremi()">
+			</div>
+			<div class="form-group">
+				<label for="wilayah">Pilih Wilayah:</label>
+				<select class="form-control" id="wilayah" oninput="hitungPremi()">
+					<option value="wilayah1">Wilayah 1 (Sumatera dan Sekitarnya)</option>
+					<option value="wilayah2">Wilayah 2 (DKI, Jawa Barat & Banten)</option>
+					<option value="wilayah3">Wilayah 3 (Selain wilayah 1 & 2)</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="pertanggungan">Pilih Pertanggungan:</label>
+				<select class="form-control" id="pertanggungan" oninput="hitungPremi()">
+					<option value="tlo">Total Loss Only</option>
+					<option value="comprehensive">All Risk - Comprehensive</option>
+				</select>
+			</div>
+		</form>
+		<div class="row">
+			<div class="col-xs-12 col-sm-6">
+				<h4>Perkiraan Premi:</h4>
+				<h2 id="perkiraan-premi"></h2>
+			</div>
+			<div class="col-xs-12 col-sm-6">
+				<h4>Perkiraan Premi Bulanan:</h4>
+				<h2 id="perkiraan-premi-bulanan"></h2>
+			</div>
+		</div>
+	</div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function hitungPremi() {
-            let harga_kendaraan = document.getElementById("harga-kendaraan").value;
-            let select_wilayah = document.getElementById("wilayah");
-            let nama_wilayah = select_wilayah.options[select_wilayah.selectedIndex].value;
+        $(document).ready(function () {
+            $('#harga-kendaraan').on('input', function (event) {
+                let harga = event.target.value;
+                harga = harga.replace(/\D/g, '');
+                let harga_num = parseInt(harga);
+                let harga_formatted = harga_num.toLocaleString('en-US');
+                event.target.value = harga_formatted;
+            });
+        });
 
-            // Menentukan persentase premi berdasarkan nama wilayah
-            let percentage_nama_wilayah;
-            switch(nama_wilayah) {
-                case "wilayah1":
-                percentage_nama_wilayah = 0.02;
+javascript
+
+    function hitungPremi() {
+        let harga_kendaraan = parseInt(
+            document.getElementById('harga-kendaraan').value.replace(/\D/g, '')
+        );
+        let select_wilayah = document.getElementById('wilayah');
+        let nama_wilayah = select_wilayah.options[select_wilayah.selectedIndex].value;
+
+        let percentage_nama_wilayah;
+        switch (nama_wilayah) {
+            case 'wilayah1':
+                percentage_nama_wilayah = 0.0267;
                 break;
-                case "wilayah2":
-                percentage_nama_wilayah = 0.023;
+            case 'wilayah2':
+                percentage_nama_wilayah = 0.0247;
                 break;
-                case "wilayah3":
-                percentage_nama_wilayah = 0.018;
+            case 'wilayah3':
+                percentage_nama_wilayah = 0.0269;
                 break;
+            default:
+                alert('Nama wilayah tidak valid.');
+        }
+
+        let output_premi = document.getElementById('perkiraan-premi');
+        let select_pertanggungan = document.getElementById('pertanggungan');
+        let jenis_pertanggungan = select_pertanggungan.options[select_pertanggungan.selectedIndex].value;
+
+        if (jenis_pertanggungan === 'tlo') {
+            switch (nama_wilayah) {
+                case 'wilayah1':
+                    percentage_nama_wilayah = 0.063;
+                    break;
+                case 'wilayah2':
+                case 'wilayah3':
+                    percentage_nama_wilayah = 0.0044;
+                    break;
                 default:
-                alert("Nama wilayah tidak valid.");
+                    alert('Nama wilayah tidak valid.');
             }
+        }
 
-            // Menghitung perkiraan premi
-            let perkiraan_premi = percentage_nama_wilayah * harga_kendaraan;
+        let perkiraan_premi = percentage_nama_wilayah * harga_kendaraan;
+        output_premi.innerHTML = `Perkiraan premi tahunan: Rp ${Math.round(perkiraan_premi).toLocaleString('en-US')}`;
 
-            // Menampilkan perkiraan premi 
-            let output_premi = document.getElementById("perkiraan-premi");
-            output_premi.innerHTML = `Perkiraan premi: ${Math.round(perkiraan_premi)}`;
-            }
+        let perkiraan_premi_bulanan = perkiraan_premi / 12;
+        let output_premi_bulanan = document.getElementById('perkiraan-premi-bulanan');
+        output_premi_bulanan.innerHTML = `Perkiraan premi bulanan : Rp ${Math.round(perkiraan_premi_bulanan).toLocaleString('en-US')}`;
+    }
     </script>
 </body>
 </html>
