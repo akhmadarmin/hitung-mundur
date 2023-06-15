@@ -56,17 +56,15 @@ function setNextDiskonSchedule(stringDate) {
             if (splitTime.length > 1) {
                 return stringTime
             }
-            // set default minute to 00 => xx:00
             return stringTime + ":00"
         }
 
         jQuery(document).ready(function() {
 
-            // fill this var from views.py
+            // ambil dari views.py
             stringNextSchedule = ""
             stringHourMinute = "18:00"
 
-            // init vars
             stringDate = ""
 
             if (stringNextSchedule !== "") {
@@ -82,11 +80,11 @@ function setNextDiskonSchedule(stringDate) {
             NextDiskonTime = getNextDiskonTime(stringHourMinute)
             console.log("NextDiskonTime: ", NextDiskonTime)
 
-            //get String Date from views.py . if empty then default is tomorrow
+            //ambil String Date dari views.py kalau kosong default besok
             NextDiskonDate = getNextDiskonDate(stringDate, NextDiskonTime)
             console.log("NextDiskonDate: ", NextDiskonDate)
 
             NextDiskonSchedule = NextDiskonDate + " " + NextDiskonTime
             setNextDiskonSchedule(NextDiskonSchedule)
 
-        }); /*ready*/
+        }); 
