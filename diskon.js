@@ -1,90 +1,91 @@
-function setNextDiskonSchedule(stringDate) {
+<script type="text/javascript">
+    function setNextDiskonSchedule(stringDate, stringTime) {
+        var dateComponents = stringDate.split("-");
+        var isoDate = dateComponents[2] + "-" + dateComponents[1] + "-" + dateComponents[0] + "T" + stringTime + ":00";
+    
+        $('#next-match').html(stringDate + " " + stringTime);
+        $('.countdown').countdown({
+            date: isoDate
+        }, function() {
+            $('.countdown').text('NANTIKAN DISKON HARI INI');
+        });
+    }
+    
 
-            $('#next-match').html(stringDate);
-            $('.countdown').countdown({
-                date: stringDate
-            }, function() {
-                $('.countdown').text('NANTIKAN DISKON HARI INI');
-            });
+    function getNextDiskonDate(nextDate, nextHourMinute) {
+        var today;
+        if (nextDate == "") {
+            today = new Date();
+        } else {
+            console.log("next is not empty!")
+            today = new Date(nextDate)
         }
-
-        function getNextDiskonDate(nextDate, nextHourMinute) {
-
-            if (nextDate == "") {
-                today = new Date();
-            } else {
-                console.log("next is not empty!")
-                today = new Date(nextDate)
-            }
-
-            console.log("today = ", today)
-
-            nextHour = nextHourMinute.split(":")[0]
-            nextMinute = nextHourMinute.split(":")[1]
-
-            console.log("nextHour = ", nextHour)
-            console.log("nextMinute = ", nextMinute)
-
-            currentHour = today.getHours()
-            currentMinute = today.getMinutes()
-
-            console.log("currentHour = ", currentHour)
-            console.log("currentMinute = ", currentMinute)
-
-            if ((currentHour > nextHour) || (currentHour == nextHour && currentMinute > nextMinute)) {
-                today.setDate(today.getDate() + 1);
-            }
-
-            year = today.getFullYear()
-            month = today.getMonth() + 1
-            day = today.getDate()
-
-            if (month < 11) {
-                month = "0" + month;
-            }
-
-            if (day < 11) {
-                day = "0" + day;
-            }
-
-            ymd = year + "-" + month + "-" + day
-            return ymd
+    
+        console.log("today = ", today)
+    
+        var nextHour = nextHourMinute.split(":")[0]
+        var nextMinute = nextHourMinute.split(":")[1]
+    
+        console.log("nextHour = ", nextHour)
+        console.log("nextMinute = ", nextMinute)
+    
+        var currentHour = today.getHours()
+        var currentMinute = today.getMinutes()
+    
+        console.log("currentHour = ", currentHour)
+        console.log("currentMinute = ", currentMinute)
+    
+        if ((currentHour > nextHour) || (currentHour == nextHour && currentMinute > nextMinute)) {
+            today.setDate(today.getDate() + 1);
         }
-
-        function getNextDiskonTime(stringTime) {
-            splitTime = stringTime.split(":");
-            if (splitTime.length > 1) {
-                return stringTime
-            }
-            return stringTime + ":00"
+    
+        var year = today.getFullYear()
+        var month = today.getMonth() + 1
+        var day = today.getDate()
+    
+        if (month < 10) {
+            month = "0" + month;
         }
+    
+        if (day < 10) {
+            day = "0" + day;
+        }
+    
+        var dmy = day + "-" + month + "-" + year;
+        return dmy;
+    }
 
-        jQuery(document).ready(function() {
+    function getNextDiskonTime(stringTime) {
+        splitTime = stringTime.split(":");
+        if (splitTime.length > 1) {
+            return stringTime
+        }
+        return stringTime + ":00"
+    }
 
-            // ambil dari views.py
-            stringNextSchedule = ""
-            stringHourMinute = "18:00"
-
-            stringDate = ""
-
-            if (stringNextSchedule !== "") {
-                splitString = stringNextSchedule.split(" ");
-                stringDate = splitString[0]
-                if (splitString.length > 1) {
-                    stringHourMinute = splitString[1];
-                }
+    jQuery(document).ready(function() {
+        // ambil dari views.py
+        var stringNextSchedule = ""
+        var stringHourMinute = "21:00"
+    
+        var stringDate = ""
+    
+        if (stringNextSchedule !== "") {
+            var splitString = stringNextSchedule.split(" ");
+            stringDate = splitString[0]
+            if (splitString.length > 1) {
+                stringHourMinute = splitString[1];
             }
-            console.log("stringDate: ", stringDate)
-            console.log("stringHourMinute: ", stringHourMinute)
-
-            NextDiskonTime = getNextDiskonTime(stringHourMinute)
-            console.log("NextDiskonTime: ", NextDiskonTime)
-
-            //ambil String Date dari views.py kalau kosong default besok
-            NextDiskonDate = getNextDiskonDate(stringDate, NextDiskonTime)
-            console.log("NextDiskonDate: ", NextDiskonDate)
-
-            NextDiskonSchedule = NextDiskonDate + " " + NextDiskonTime
-            setNextDiskonSchedule(NextDiskonSchedule)
-
-        }); 
+        }
+        console.log("stringDate: ", stringDate)
+        console.log("stringHourMinute: ", stringHourMinute)
+    
+        var NextDiskonTime = getNextDiskonTime(stringHourMinute)
+        console.log("NextDiskonTime: ", NextDiskonTime)
+    
+        //ambil String Date dari views.py kalau kosong default besok
+        var NextDiskonDate = getNextDiskonDate(stringDate, NextDiskonTime)
+        console.log("NextDiskonDate: ", NextDiskonDate)
+    
+        setNextDiskonSchedule(NextDiskonDate, NextDiskonTime)
+    }); 
